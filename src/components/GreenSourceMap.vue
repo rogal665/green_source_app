@@ -10,7 +10,7 @@
       @mousemove="handleMouseMove"
       @mouseleave="handleMouseUp"
     >
-      <svg version="1.1" viewBox="-180 250 1008 500" style="overflow: hidden">
+      <svg version="1.1" viewBox="-180 250 1008 500">
         <g>
           <path
             id="RU"
@@ -393,7 +393,7 @@ export default defineComponent({
       default: "black",
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const node = ref(document.createElement("style"));
     const chromaScale = ref(chroma.scale([props.lowColor, props.highColor]));
     const mapContainer = ref(null);
@@ -407,6 +407,7 @@ export default defineComponent({
     const position = ref("50% 50%");
     const longPressTimer = ref(0);
     const isDragging = ref(false);
+    const target = ref("");
     //colours render
     watch(
       () => props.countryData,
@@ -451,7 +452,8 @@ export default defineComponent({
     };
     // coutry
     const handleShortClick = (event) => {
-      console.log(event.target.id);
+      target.value = event.target.id;
+      emit("select-region", event.target.id);
       longPressTimer.value = null;
     };
 
@@ -516,11 +518,8 @@ export default defineComponent({
   },
 });
 </script>
-
 <style>
-.vue-world-map {
-}
-
-#map {
+svg {
+  overflow: hidden;
 }
 </style>

@@ -143,9 +143,6 @@ export default {
 }
 
 .slider-container {
-  width: 80%;
-  margin: 0 auto;
-  position: relative;
 }
 .slider {
   -webkit-appearance: none;

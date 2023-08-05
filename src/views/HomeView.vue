@@ -1,24 +1,38 @@
 <template>
   <div class="map-container">
-    <GreenSourceMap class="map" :countryData="countryData"></GreenSourceMap>
+    <GreenSourceMap
+      class="map"
+      :countryData="countryData"
+      @select-region="selectRegion"
+    >
+    </GreenSourceMap>
     <TimeLine
       class="timeline"
       @time-selected="handleSelectedTime"
       :range="dateRange"
     ></TimeLine>
+    <RegionDetails
+      class="region-details"
+      :selectedRegionData="selectedRegionData"
+    ></RegionDetails>
   </div>
 </template>
 
 <script>
 import GreenSourceMap from "@/components/GreenSourceMap.vue";
-import { getCountriesData } from "@/services/countries-data";
+import {
+  getCountriesData,
+  getCountrieDetails,
+} from "@/services/countries-data";
 import TimeLine from "@/components/MapTimeLine.vue";
+import RegionDetails from "@/components/RegionDetails.vue";
 
 export default {
   name: "HomeView",
   components: {
     GreenSourceMap,
     TimeLine,
+    RegionDetails,
   },
 
   data() {
@@ -28,9 +42,23 @@ export default {
       uniqueTimeISOObj: {},
       dateRange: [],
       selectedTime: "",
+      selectedRegion: "",
+      selectedRegionData: {},
     };
   },
   methods: {
+    selectRegion(SelectedRegion) {
+      if (SelectedRegion === "map" || SelectedRegion === "") {
+        return;
+      }
+      const countriesDetails = getCountrieDetails();
+      for (const country of countriesDetails) {
+        if (country.country_code === SelectedRegion) {
+          this.selectedRegionData = country;
+        }
+      }
+      return null;
+    },
     findSelectedTime(proxyObj, keyToFind) {
       const keys = Object.keys(proxyObj);
 
@@ -50,7 +78,7 @@ export default {
           });
 
           this.countryData = powerValues;
-          //console.log(this.countryData)
+          //console.log(this.countryData);
         }
       });
     },
@@ -113,6 +141,18 @@ export default {
       //console.log(this.uniqueTimeISOObj);
       return this.uniqueTimeISOObj;
     },
+    setDefaultTime() {
+      if (
+        !this.uniqueTimeISOObj ||
+        Object.keys(this.uniqueTimeISOObj).length === 0
+      ) {
+        return undefined;
+      }
+      const keys = Object.keys(this.uniqueTimeISOObj);
+      const lastKey = keys[keys.length - 1];
+
+      this.selectedTime = lastKey;
+    },
   },
 
   created() {
@@ -125,6 +165,10 @@ export default {
       this.copyDeteRange();
     }, 100000);
   },
+  mounted() {
+    this.setDefaultTime();
+    this.findSelectedTime(this.uniqueTimeISOObj, this.selectedTime);
+  },
 
   beforeUnmount() {
     clearInterval(this.intervalId);
@@ -135,14 +179,23 @@ export default {
 <style scoped>
 .map-container {
   display: grid;
-  grid-template-rows: 1fr 80px;
+  grid-template-areas: "map details" "map timeline";
+  grid-template-columns: 1fr 400px;
+  grid-template-rows: 1fr 100px;
   height: 100%;
   background-color: black;
 }
+.map {
+  grid-area: map;
+}
 .timeline {
+  grid-area: timeline;
   background-color: rgb(182, 201, 10);
   z-index: 1;
 }
-.map {
+.region-details {
+  grid-area: details;
+  z-index: 1;
+  background-color: rgb(119, 0, 0);
 }
 </style>
