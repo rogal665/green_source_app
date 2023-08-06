@@ -1,0 +1,2 @@
+"use strict";(self["webpackChunkgreen_source_app"]=self["webpackChunkgreen_source_app"]||[]).push([[443],{6554:function(n,e,r){r.r(e),r.d(e,{default:function(){return l}});var u=r(3396);const s=(0,u._)("h1",null,"This is About",-1),t=[s];function c(n,e){return(0,u.wg)(),(0,u.iD)("div",null,t)}var a=r(89);const i={},o=(0,a.Z)(i,[["render",c]]);var l=o}}]);
+//# sourceMappingURL=about.aff367e8.js.map
