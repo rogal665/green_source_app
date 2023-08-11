@@ -3,7 +3,11 @@
     <GreenSourceMap
       class="map"
       :countryData="countryData"
+      :lowColor="lowColor"
+      :highColor="highColor"
+      :injectedScale="scale"
       @select-region="selectRegion"
+      @scale-value="handleScale"
     >
     </GreenSourceMap>
     <TimeLine
@@ -15,6 +19,18 @@
       class="region-details"
       :selectedRegionData="selectedRegionData"
     ></RegionDetails>
+    <MapLegend
+      class="legend"
+      :lowColor="lowColor"
+      :highColor="highColor"
+      :lowValue="lowValue"
+      :highValue="highValue"
+    ></MapLegend>
+    <MapSettings
+      class="settings"
+      :scale="scale"
+      @scale-value="handleScale"
+    ></MapSettings>
   </div>
 </template>
 
@@ -26,6 +42,8 @@ import {
 } from "@/services/countries-data";
 import TimeLine from "@/components/MapTimeLine.vue";
 import RegionDetails from "@/components/RegionDetails.vue";
+import MapLegend from "@/components/MapLegend.vue";
+import MapSettings from "@/components/MapSettings.vue";
 
 export default {
   name: "HomeView",
@@ -33,6 +51,8 @@ export default {
     GreenSourceMap,
     TimeLine,
     RegionDetails,
+    MapLegend,
+    MapSettings,
   },
 
   data() {
@@ -44,9 +64,35 @@ export default {
       selectedTime: "",
       selectedRegion: "",
       selectedRegionData: {},
+      lowColor: "#D6390D",
+      highColor: "#46D60D",
+      maxPowerValue: 120,
+      lowValue: 0,
+      highValue: 0,
+      scale: 3,
     };
   },
   methods: {
+    handleScale(selectedScale) {
+      this.scale = selectedScale;
+    },
+    findLowHigh() {
+      this.lowValue = 0;
+      this.highValue = 0;
+      for (const key in this.countryData) {
+        if (Object.prototype.hasOwnProperty.call(this.countryData, key)) {
+          const value = this.countryData[key];
+          if (typeof value === "number") {
+            if (value > this.highValue) {
+              this.highValue = value;
+            }
+            if (value < this.lowValue) {
+              this.lowValue = value;
+            }
+          }
+        }
+      }
+    },
     selectRegion(SelectedRegion) {
       if (SelectedRegion === "map" || SelectedRegion === "") {
         return;
@@ -76,8 +122,9 @@ export default {
               powerValues[innerKey] = selectedObj[innerKey].power_mw;
             }
           });
-
+          powerValues.MAX = this.maxPowerValue;
           this.countryData = powerValues;
+          this.findLowHigh();
           //console.log(this.countryData);
         }
       });
@@ -179,8 +226,8 @@ export default {
 <style scoped>
 .map-container {
   display: grid;
-  grid-template-areas: "map details" "map timeline";
-  grid-template-columns: 1fr 400px;
+  grid-template-areas: "map settings details" "map legend timeline";
+  grid-template-columns: 1fr 200px 300px;
   grid-template-rows: 1fr 100px;
   height: 100%;
   background-color: black;
@@ -197,5 +244,18 @@ export default {
   grid-area: details;
   z-index: 1;
   background-color: rgb(119, 0, 0);
+}
+.legend {
+  grid-area: legend;
+  z-index: 1;
+  background-color: rgb(18, 0, 119);
+}
+
+.settings {
+  grid-area: settings;
+  z-index: 1;
+  height: fit-content;
+  max-width: 50px;
+  margin-left: auto;
 }
 </style>

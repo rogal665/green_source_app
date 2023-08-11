@@ -1,7 +1,7 @@
 <template>
   <div class="details-container">
     <h1 v-if="!selectedRegionData.country_code">No Data Selected</h1>
-    <h1>{{ selectedRegionData.country_code }}</h1>
+    <h1>{{ selectedCountry }}</h1>
     <h1>{{ selectedRegionData.powerUnit }}</h1>
     <h1>{{ selectedRegionData.wind_capacity }}</h1>
     <h1>{{ selectedRegionData.solar_capacity }}</h1>
@@ -14,8 +14,15 @@ export default {
   props: {
     selectedRegionData: {},
   },
+  watch: {
+    selectedRegionData(selectedRegionData) {
+      this.selectedCountry =
+        this.countriesCodes[selectedRegionData.country_code];
+    },
+  },
   data() {
     return {
+      selectedCountry: "",
       countriesCodes: {
         AF: "Afghanistan",
         AX: "Aland Islands",

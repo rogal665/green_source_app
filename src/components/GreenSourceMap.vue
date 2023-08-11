@@ -10,7 +10,7 @@
       @mousemove="handleMouseMove"
       @mouseleave="handleMouseUp"
     >
-      <svg version="1.1" viewBox="-180 250 1008 500">
+      <svg version="1.1" viewBox="-200 350 1008 500">
         <g>
           <path
             id="RU"
@@ -392,19 +392,23 @@ export default defineComponent({
       type: String,
       default: "black",
     },
+    injectedScale: {
+      type: Number,
+      default: 3,
+    },
   },
   setup(props, { emit }) {
     const node = ref(document.createElement("style"));
     const chromaScale = ref(chroma.scale([props.lowColor, props.highColor]));
     const mapContainer = ref(null);
     const map = ref(null);
-    const scale = ref(2);
+    const scale = ref(3);
     const scaleChange = ref(1);
     const mouseX = ref(0);
     const mouseY = ref(0);
     const positionX = ref(0);
     const positionY = ref(0);
-    const position = ref("50% 50%");
+    const position = ref("50% 30%");
     const longPressTimer = ref(0);
     const isDragging = ref(false);
     const target = ref("");
@@ -413,6 +417,12 @@ export default defineComponent({
       () => props.countryData,
       () => {
         renderMapCSS();
+      }
+    );
+    watch(
+      () => props.injectedScale,
+      (newValue) => {
+        scale.value = newValue;
       }
     );
 
@@ -435,13 +445,14 @@ export default defineComponent({
 
       scaleChange.value = event.deltaY > 0 ? 0.9 : 1.1;
 
-      if (scale.value > 3 && scaleChange.value == 1.1) {
-        return;
+      if (scale.value >= 4 && scaleChange.value == 1.1) {
+        scale.value = 4;
       } else if (scale.value < 1 && scaleChange.value == 0.9) {
-        return;
+        scale.value = 1;
       } else {
         scale.value = scale.value * scaleChange.value;
       }
+      emit("scale-value", Math.round(scale.value * 10) / 10);
       /* zooming to coursor
       if (scaleChange.value == 1.1) {
         positionX.value = `${mouseX.value}`;
