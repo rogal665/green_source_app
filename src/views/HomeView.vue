@@ -1,5 +1,10 @@
 <template>
-  <div class="map-container">
+  <div
+    :class="{
+      'map-container': countryFound,
+      'map-container-no-data': !countryFound,
+    }"
+  >
     <GreenSourceMap
       class="map"
       :countryData="countryData"
@@ -35,6 +40,7 @@
 </template>
 
 <script>
+import "@/main.scss";
 import GreenSourceMap from "@/components/GreenSourceMap.vue";
 import {
   getCountriesData,
@@ -70,6 +76,7 @@ export default {
       lowValue: 0,
       highValue: 0,
       scale: 3,
+      countryFound: false,
     };
   },
   methods: {
@@ -94,16 +101,19 @@ export default {
       }
     },
     selectRegion(SelectedRegion) {
-      if (SelectedRegion === "map" || SelectedRegion === "") {
-        return;
-      }
+      this.countryFound = false;
       const countriesDetails = getCountrieDetails();
       for (const country of countriesDetails) {
         if (country.country_code === SelectedRegion) {
           this.selectedRegionData = country;
+          this.countryFound = true;
+          break;
         }
       }
-      return null;
+      if (!this.countryFound) {
+        this.selectedRegionData = "no data";
+        this.countryFound = false;
+      }
     },
     findSelectedTime(proxyObj, keyToFind) {
       const keys = Object.keys(proxyObj);
@@ -227,35 +237,37 @@ export default {
 .map-container {
   display: grid;
   grid-template-areas: "map settings details" "map legend timeline";
-  grid-template-columns: 1fr 200px 300px;
-  grid-template-rows: 1fr 100px;
+  grid-template-columns: 1fr 22rem 18rem;
+  grid-template-rows: 1fr auto;
   height: 100%;
-  background-color: black;
+}
+.map-container-no-data {
+  display: grid;
+  grid-template-areas: "map settings settings" "map legend timeline";
+  grid-template-columns: 1fr 22rem 18rem;
+  grid-template-rows: 1fr auto;
+  height: 100%;
 }
 .map {
   grid-area: map;
 }
 .timeline {
   grid-area: timeline;
-  background-color: rgb(182, 201, 10);
   z-index: 1;
 }
 .region-details {
   grid-area: details;
   z-index: 1;
-  background-color: rgb(119, 0, 0);
 }
 .legend {
   grid-area: legend;
   z-index: 1;
-  background-color: rgb(18, 0, 119);
 }
 
 .settings {
   grid-area: settings;
   z-index: 1;
   height: fit-content;
-  max-width: 50px;
   margin-left: auto;
 }
 </style>

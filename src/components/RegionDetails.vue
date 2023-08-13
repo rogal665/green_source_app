@@ -1,14 +1,13 @@
 <template>
-  <div class="details-container">
-    <h1 v-if="!selectedRegionData.country_code">No Data Selected</h1>
-    <h1>{{ selectedCountry }}</h1>
-    <h1>{{ selectedRegionData.powerUnit }}</h1>
-    <h1>{{ selectedRegionData.wind_capacity }}</h1>
-    <h1>{{ selectedRegionData.solar_capacity }}</h1>
+  <div v-if="selectedRegionData.country_code" class="details-container">
+    <h3>{{ selectedCountry }}</h3>
+    <p>Energy from wind capity: {{ selectedRegionData.wind_capacity }}MW</p>
+    <p>Energy from solar capity: {{ selectedRegionData.solar_capacity }}MW</p>
   </div>
 </template>
 
 <script>
+import "@/main.scss";
 export default {
   name: "RegionDetails",
   props: {
@@ -276,8 +275,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.details-container {
-  text-align: center;
-}
-</style>
+<style scoped></style>

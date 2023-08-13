@@ -1,19 +1,32 @@
 <template>
   <div>
-    <div class="extrime-values">
-      <span>{{ this.lowValue }}</span>
-      <span>{{ this.roundUpToTen(this.highValue) }}</span>
+    <div class="legend-title">Power from wind farms (MW)</div>
+    <div class="data-scale">
+      <div
+        class="gradient"
+        :style="{
+          background: `linear-gradient(to right, ${this.lowColor}, ${this.highColor})`,
+        }"
+      ></div>
+      <div class="extrime-values">
+        <span>{{ this.lowValue }}</span>
+        <span>{{
+          this.roundUpToTen((this.highValue - this.lowValue) / 4)
+        }}</span>
+        <span>{{
+          this.roundUpToTen((this.highValue - this.lowValue) / 2)
+        }}</span>
+        <span>{{
+          this.roundUpToTen(((this.highValue - this.lowValue) / 4) * 3)
+        }}</span>
+        <span>{{ this.roundUpToTen(this.highValue - this.lowValue) }}</span>
+      </div>
     </div>
-    <div
-      class="gradient"
-      :style="{
-        background: `linear-gradient(to right, ${this.lowColor}, ${this.highColor})`,
-      }"
-    ></div>
   </div>
 </template>
 
 <script>
+import "@/main.scss";
 export default {
   name: "MapLegend",
   props: {
@@ -30,16 +43,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.gradient {
-  margin: auto;
-  margin-top: 20px;
-  width: 150px;
-  height: 50px;
-}
-.extrime-values {
-  display: flex;
-  justify-content: space-between;
-  color: white;
-}
-</style>
+<style scoped></style>

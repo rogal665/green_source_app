@@ -362,6 +362,7 @@
 
 <script>
 // prettier-ignore
+import "@/main.scss";
 import { defineComponent, ref, watch, onMounted, onUnmounted } from "vue";
 import chroma from "chroma-js";
 import {
@@ -402,7 +403,7 @@ export default defineComponent({
     const chromaScale = ref(chroma.scale([props.lowColor, props.highColor]));
     const mapContainer = ref(null);
     const map = ref(null);
-    const scale = ref(3);
+    const scale = ref(4);
     const scaleChange = ref(1);
     const mouseX = ref(0);
     const mouseY = ref(0);
@@ -445,10 +446,10 @@ export default defineComponent({
 
       scaleChange.value = event.deltaY > 0 ? 0.9 : 1.1;
 
-      if (scale.value >= 4 && scaleChange.value == 1.1) {
-        scale.value = 4;
-      } else if (scale.value < 1 && scaleChange.value == 0.9) {
-        scale.value = 1;
+      if (scale.value >= 8 && scaleChange.value == 1.1) {
+        scale.value = 8;
+      } else if (scale.value < 3 && scaleChange.value == 0.9) {
+        scale.value = 3;
       } else {
         scale.value = scale.value * scaleChange.value;
       }
