@@ -5,11 +5,75 @@
     </div>
     <div class="controlers-container">
       <div class="controlers">
-        <button class="btn" @click="scrollToStart">To Start</button>
-        <button @click="scrollBackward">Backward</button>
-        <button @click="scrollForward">Forward</button>
-        <button @click="scrollToEnd">End</button>
-        <button @click="stopScrolling">Stop</button>
+        <svg
+          @click="scrollToStart"
+          class="timeline-controllers"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="#000000"
+          viewBox="0 0 256 256"
+        >
+          <path
+            d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm40,144a8,8,0,0,1-12.65,6.51L104,137.83V168a8,8,0,0,1-16,0V88a8,8,0,0,1,16,0v30.17l51.35-36.68A8,8,0,0,1,168,88Z"
+          ></path>
+        </svg>
+
+        <svg
+          @click="scrollBackward"
+          class="timeline-controllers"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="#000000"
+          viewBox="0 0 256 256"
+        >
+          <path
+            d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm48,132a8,8,0,0,1-12.59,6.55l-40-28A8,8,0,0,1,120,128v28a8,8,0,0,1-12.59,6.55l-40-28a8,8,0,0,1,0-13.1l40-28A8,8,0,0,1,120,100v28a8,8,0,0,1,3.41-6.55l40-28A8,8,0,0,1,176,100Z"
+          ></path>
+        </svg>
+
+        <svg
+          @click="scrollForward"
+          class="timeline-controllers"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="#000000"
+          viewBox="0 0 256 256"
+        >
+          <path
+            d="M128,24A104,104,0,1,0,232,128,104.13,104.13,0,0,0,128,24Zm36.44,110.66-48,32A8.05,8.05,0,0,1,112,168a8,8,0,0,1-8-8V96a8,8,0,0,1,12.44-6.66l48,32a8,8,0,0,1,0,13.32Z"
+          ></path>
+        </svg>
+
+        <svg
+          @click="stopScrolling"
+          class="timeline-controllers"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="#000000"
+          viewBox="0 0 256 256"
+        >
+          <path
+            d="M128,24A104,104,0,1,0,232,128,104.13,104.13,0,0,0,128,24ZM112,160a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Zm48,0a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Z"
+          ></path>
+        </svg>
+
+        <svg
+          @click="scrollToEnd"
+          class="timeline-controllers"
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="#000000"
+          viewBox="0 0 256 256"
+        >
+          <path
+            d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm40,144a8,8,0,0,1-16,0V137.83l-51.35,36.68A8,8,0,0,1,88,168V88a8,8,0,0,1,12.65-6.51L152,118.17V88a8,8,0,0,1,16,0Z"
+          ></path>
+        </svg>
       </div>
       <input
         type="range"
@@ -141,9 +205,7 @@ export default {
       }
     },
   },
-  
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

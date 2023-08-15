@@ -8,7 +8,6 @@
       @mousedown="handleMouseDown"
       @mouseup="handleMouseUp"
       @mousemove="handleMouseMove"
-      @mouseleave="handleMouseUp"
     >
       <svg version="1.1" viewBox="-200 350 1008 500">
         <g>
@@ -409,7 +408,7 @@ export default defineComponent({
     const mouseY = ref(0);
     const positionX = ref(0);
     const positionY = ref(0);
-    const position = ref("50% 30%");
+    const position = ref("50% 50%");
     const longPressTimer = ref(0);
     const isDragging = ref(false);
     const target = ref("");
@@ -491,8 +490,8 @@ export default defineComponent({
 
     const handleMouseMove = (event) => {
       if (isDragging.value) {
-        positionX.value -= event.movementX;
-        positionY.value -= event.movementY;
+        positionX.value -= event.movementX / scale.value;
+        positionY.value -= event.movementY / scale.value;
         position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
         event.preventDefault();
       }
@@ -504,11 +503,13 @@ export default defineComponent({
       document.body.appendChild(node.value);
       renderMapCSS();
       //centrall point
-      positionX.value = window.innerWidth / 2;
-      positionY.value = window.innerHeight / 2;
+      positionX.value = window.innerWidth / 2 - 400;
+      positionY.value = window.innerHeight / 2 - 250;
+      position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
       window.addEventListener("resize", () => {
-        positionX.value = window.innerWidth / 2;
-        positionY.value = window.innerHeight / 2;
+        positionX.value = window.innerWidth / 2 - 400;
+        positionY.value = window.innerHeight / 2 - 250;
+        position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
       });
     });
 

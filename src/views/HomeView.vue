@@ -112,7 +112,6 @@ export default {
       }
       if (!this.countryFound) {
         this.selectedRegionData = "no data";
-        this.countryFound = false;
       }
     },
     findSelectedTime(proxyObj, keyToFind) {
