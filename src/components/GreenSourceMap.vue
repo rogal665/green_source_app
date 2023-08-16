@@ -8,8 +8,9 @@
       @mousedown="handleMouseDown"
       @mouseup="handleMouseUp"
       @mousemove="handleMouseMove"
+      @mouseleave="isDragging = false"
     >
-      <svg version="1.1" viewBox="-200 350 1008 500">
+      <svg version="1.1" viewBox="50 300 450 400">
         <g>
           <path
             id="RU"
@@ -394,7 +395,7 @@ export default defineComponent({
     },
     injectedScale: {
       type: Number,
-      default: 3,
+      default: 1,
     },
   },
   setup(props, { emit }) {
@@ -402,13 +403,13 @@ export default defineComponent({
     const chromaScale = ref(chroma.scale([props.lowColor, props.highColor]));
     const mapContainer = ref(null);
     const map = ref(null);
-    const scale = ref(4);
+    const scale = ref(2);
     const scaleChange = ref(1);
     const mouseX = ref(0);
     const mouseY = ref(0);
     const positionX = ref(0);
     const positionY = ref(0);
-    const position = ref("50% 50%");
+    const position = ref("0 0");
     const longPressTimer = ref(0);
     const isDragging = ref(false);
     const target = ref("");
@@ -445,21 +446,14 @@ export default defineComponent({
 
       scaleChange.value = event.deltaY > 0 ? 0.9 : 1.1;
 
-      if (scale.value >= 8 && scaleChange.value == 1.1) {
-        scale.value = 8;
-      } else if (scale.value < 3 && scaleChange.value == 0.9) {
-        scale.value = 3;
+      if (scale.value >= 6 && scaleChange.value == 1.1) {
+        scale.value = 6;
+      } else if (scale.value < 1 && scaleChange.value == 0.9) {
+        scale.value = 1;
       } else {
         scale.value = scale.value * scaleChange.value;
       }
       emit("scale-value", Math.round(scale.value * 10) / 10);
-      /* zooming to coursor
-      if (scaleChange.value == 1.1) {
-        positionX.value = `${mouseX.value}`;
-        positionY.value = `${mouseY.value}`;
-
-        position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
-      } */
     };
     // coutry
     const handleShortClick = (event) => {
@@ -490,8 +484,17 @@ export default defineComponent({
 
     const handleMouseMove = (event) => {
       if (isDragging.value) {
-        positionX.value -= event.movementX / scale.value;
-        positionY.value -= event.movementY / scale.value;
+        positionX.value -= event.movementX / (scale.value - 1);
+        positionY.value -= event.movementY / (scale.value - 1);
+        if (positionX.value > 1300) {
+          positionX.value = 1300;
+        } else if (positionY.value > 2000) {
+          positionY.value = 2000;
+        } else if (positionX.value < 0) {
+          positionX.value = 0;
+        } else if (positionY.value < 0) {
+          positionY.value = 0;
+        }
         position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
         event.preventDefault();
       }
@@ -502,13 +505,12 @@ export default defineComponent({
       window.addEventListener("wheel", handleScroll);
       document.body.appendChild(node.value);
       renderMapCSS();
-      //centrall point
-      positionX.value = window.innerWidth / 2 - 400;
-      positionY.value = window.innerHeight / 2 - 250;
+      positionX.value = window.innerWidth - 500;
+      positionY.value = window.innerHeight + 300;
       position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
       window.addEventListener("resize", () => {
-        positionX.value = window.innerWidth / 2 - 400;
-        positionY.value = window.innerHeight / 2 - 250;
+        positionX.value = window.innerWidth - 500;
+        positionY.value = window.innerHeight + 300;
         position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
       });
     });

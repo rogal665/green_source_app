@@ -4,8 +4,8 @@
     <div class="zoom-slider-container">
       <input
         type="range"
-        :min="3"
-        :max="8"
+        :min="1"
+        :max="6"
         class="zoom-slider"
         :value="scale"
         @input="updateScale"
@@ -24,18 +24,18 @@ export default {
   },
   methods: {
     incrementScale() {
-      if (this.scale < 8) {
+      if (this.scale < 6) {
         this.$emit("scale-value", this.scale + 0.1);
       }
     },
     decrementScale() {
-      if (this.scale > 3) {
+      if (this.scale > 1) {
         this.$emit("scale-value", this.scale - 0.1);
       }
     },
     updateScale(event) {
       const newScale = parseFloat(event.target.value);
-      if (newScale >= 3 && newScale <= 8) {
+      if (newScale >= 1 && newScale <= 6) {
         this.$emit("scale-value", newScale);
       }
     },

@@ -1,10 +1,5 @@
 <template>
-  <div
-    :class="{
-      'map-container': countryFound,
-      'map-container-no-data': !countryFound,
-    }"
-  >
+  <div class="map-container">
     <GreenSourceMap
       class="map"
       :countryData="countryData"
@@ -75,7 +70,7 @@ export default {
       maxPowerValue: 120,
       lowValue: 0,
       highValue: 0,
-      scale: 3,
+      scale: 2,
       countryFound: false,
     };
   },
@@ -234,39 +229,36 @@ export default {
 
 <style scoped>
 .map-container {
-  display: grid;
-  grid-template-areas: "map settings details" "map legend timeline";
-  grid-template-columns: 1fr 22rem 18rem;
-  grid-template-rows: 1fr auto;
-  height: 100%;
-}
-.map-container-no-data {
-  display: grid;
-  grid-template-areas: "map settings settings" "map legend timeline";
-  grid-template-columns: 1fr 22rem 18rem;
-  grid-template-rows: 1fr auto;
-  height: 100%;
+  overflow: hidden;
 }
 .map {
-  grid-area: map;
+  z-index: 0;
 }
 .timeline {
-  grid-area: timeline;
+  position: absolute;
+  bottom: 0;
+  right: 0;
   z-index: 1;
 }
 .region-details {
-  grid-area: details;
+  position: absolute;
   z-index: 1;
+  top: 0;
+  right: 0;
 }
 .legend {
-  grid-area: legend;
+  position: absolute;
   z-index: 1;
+  bottom: 0;
+  right: 300px;
 }
 
 .settings {
-  grid-area: settings;
+  position: absolute;
   z-index: 1;
   height: fit-content;
   margin-left: auto;
+  top: 40px;
+  right: 300px;
 }
 </style>

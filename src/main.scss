@@ -82,6 +82,10 @@ h5 {
   background-color: black;
 }
 
+.vue-world-map {
+  width: 100%;
+}
+
 .settings {
   display: flex;
   flex-direction: column;
@@ -291,9 +295,9 @@ h5 {
 
 /*details*/
 .region-details {
-    margin: 1rem 0.3rem;
-    background-color: $grey-colour;
-    color: $grey-colour-light;
-    border-radius: 5px;
-    padding: 10px;
-  }
+  margin: 1rem 0.3rem;
+  background-color: $grey-colour;
+  color: $grey-colour-light;
+  border-radius: 5px;
+  padding: 10px;
+}
