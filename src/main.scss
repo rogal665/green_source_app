@@ -78,12 +78,15 @@ h5 {
   height: 100vh;
 }
 /*map*/
-.map-container {
+.vue-world-map {
+  position: relative;
   background-color: black;
 }
 
-.vue-world-map {
-  width: 100%;
+.map-container {
+  width: 2400px;
+  transition: transform 0.2s ease-out;
+  position: absolute;
 }
 
 .settings {

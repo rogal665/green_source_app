@@ -1,5 +1,5 @@
 <template>
-  <div class="vue-world-map">
+  <div ref="container" class="vue-world-map">
     <div
       ref="map"
       id="map"
@@ -10,7 +10,7 @@
       @mousemove="handleMouseMove"
       @mouseleave="isDragging = false"
     >
-      <svg version="1.1" viewBox="50 300 450 400">
+      <svg version="1.1" viewBox="50 300 450 450">
         <g>
           <path
             id="RU"
@@ -422,11 +422,20 @@ export default defineComponent({
     );
     watch(
       () => props.injectedScale,
-      (newValue) => {
-        scale.value = newValue;
+      (newValue, oldValue) => {
+        if (scale.value <= 1.1 && newValue < oldValue) {
+          scale.value = 1.1;
+        } else {
+          scale.value = newValue;
+        }
       }
     );
-
+    watch(
+      () => map.value,
+      (newValue) => {
+        console.log(newValue);
+      }
+    );
     function renderMapCSS() {
       const baseCss = getBaseCss(props);
       const dynamicMapCss = getDynamicMapCss(
@@ -448,11 +457,20 @@ export default defineComponent({
 
       if (scale.value >= 6 && scaleChange.value == 1.1) {
         scale.value = 6;
-      } else if (scale.value < 1 && scaleChange.value == 0.9) {
-        scale.value = 1;
+      } else if (scale.value <= 1.1 && scaleChange.value == 0.9) {
+        scale.value = 1.1;
       } else {
         scale.value = scale.value * scaleChange.value;
       }
+      //console.log(scale.value);
+      console.log(
+        "X: " +
+          positionX.value +
+          " Y: " +
+          positionY.value +
+          " scale: " +
+          scale.value
+      );
       emit("scale-value", Math.round(scale.value * 10) / 10);
     };
     // coutry
@@ -483,38 +501,51 @@ export default defineComponent({
     };
 
     const handleMouseMove = (event) => {
+      //console.log(map.value);
       if (isDragging.value) {
-        positionX.value -= event.movementX / (scale.value - 1);
-        positionY.value -= event.movementY / (scale.value - 1);
-        if (positionX.value > 1300) {
-          positionX.value = 1300;
-        } else if (positionY.value > 2000) {
-          positionY.value = 2000;
+        if (scale.value - 1 != 0) {
+          positionX.value -= event.movementX / (scale.value - 1);
+        }
+        if (scale.value - 1 != 0) {
+          positionY.value -= event.movementY / (scale.value - 1);
+        }
+        /*
+        if (positionX.value > 2400) {
+          positionX.value = 2400;
         } else if (positionX.value < 0) {
           positionX.value = 0;
         } else if (positionY.value < 0) {
           positionY.value = 0;
         }
+        */
+        console.log(
+          "X: " +
+            positionX.value +
+            " Y: " +
+            positionY.value +
+            " scale: " +
+            scale.value
+        );
         position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
         event.preventDefault();
       }
     };
-
     onMounted(() => {
       window.addEventListener("mousemove", updateMousePosition);
       window.addEventListener("wheel", handleScroll);
       document.body.appendChild(node.value);
       renderMapCSS();
-      positionX.value = window.innerWidth - 500;
-      positionY.value = window.innerHeight + 300;
+      positionX.value = 2400;
+      positionY.value = 2400;
       position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
+      /*
       window.addEventListener("resize", () => {
-        positionX.value = window.innerWidth - 500;
-        positionY.value = window.innerHeight + 300;
+        positionX.value = window.innerWidth;
+        positionY.value = window.innerHeight;
         position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
       });
+      */
     });
-
     onUnmounted(() => {
       window.removeEventListener("wheel", handleScroll);
     });

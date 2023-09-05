@@ -1,5 +1,5 @@
 <template>
-  <div class="map-container">
+  <div class="map-container-root">
     <GreenSourceMap
       class="map"
       :countryData="countryData"
