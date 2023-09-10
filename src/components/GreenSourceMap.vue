@@ -396,7 +396,7 @@ export default defineComponent({
     },
     injectedScale: {
       type: Number,
-      default: 1,
+      default: 1.1,
     },
   },
   setup(props, { emit }) {
@@ -404,10 +404,8 @@ export default defineComponent({
     const chromaScale = ref(chroma.scale([props.lowColor, props.highColor]));
     const mapContainer = ref(null);
     const map = ref(null);
-    const scale = ref(2);
-    const scaleChange = ref(1);
-    const mouseX = ref(0);
-    const mouseY = ref(0);
+    const scale = ref(1.1);
+    const scaleChange = ref(0);
     const positionX = ref(0);
     const positionY = ref(0);
     const position = ref("0 0");
@@ -415,6 +413,9 @@ export default defineComponent({
     const isDragging = ref(false);
     const target = ref(null);
     const mapSvg = ref(null);
+    const scalingXPercent = ref(null);
+    const scalingYPercent = ref(null);
+    const scaleChangeController = ref(true);
     //colours render
     watch(
       () => props.countryData,
@@ -424,21 +425,17 @@ export default defineComponent({
     );
     watch(
       () => props.injectedScale,
-      (newValue, oldValue) => {
-        if (scale.value <= 1.1 && newValue < oldValue) {
-          scale.value = 1.1;
-        } else {
-          scale.value = newValue;
+      async (newValue, oldValue) => {
+        if (scaleChangeController.value) {
+          if (scale.value <= 1.1 && newValue < oldValue) {
+            await scalling(scale.value);
+          } else {
+            await scalling(newValue);
+          }
+          await reposition();
         }
       }
     );
-    watch(
-      () => map.value,
-      (newValue) => {
-        console.log(newValue);
-      }
-    );
-
     function renderMapCSS() {
       const baseCss = getBaseCss(props);
       const dynamicMapCss = getDynamicMapCss(
@@ -448,34 +445,54 @@ export default defineComponent({
       node.value.innerHTML = getCombinedCssString(baseCss, dynamicMapCss);
     }
     //scalling
-    const updateMousePosition = (event) => {
-      mouseX.value = event.pageX;
-      mouseY.value = event.pageY;
+
+    const handleScroll = async (event) => {
+      await scalling(event);
+      await reposition();
     };
-    const handleScroll = (event) => {
-      const mapElement = map.value;
-      if (!mapElement) return;
 
-      scaleChange.value = event.deltaY > 0 ? 0.9 : 1.1;
-
-      if (scale.value >= 6 && scaleChange.value == 1.1) {
-        scale.value = 6;
-      } else if (scale.value <= 1.1 && scaleChange.value == 0.9) {
-        scale.value = 1.1;
-      } else {
-        scale.value = scale.value * scaleChange.value;
+    function scalling(event) {
+      if (typeof event !== "number") {
+        scaleChangeController.value = false;
       }
-      //console.log(scale.value);
-      console.log(
-        "X: " +
-          positionX.value +
-          " Y: " +
-          positionY.value +
-          " scale: " +
-          scale.value
-      );
-      emit("scale-value", Math.round(scale.value * 10) / 10);
-    };
+      const scalingX =
+        positionX.value * (scale.value - 1) + window.innerWidth / 2;
+      scalingXPercent.value =
+        (scalingX * 100) / mapSvg.value.getBoundingClientRect().width;
+      const scalingY =
+        positionY.value * (scale.value - 1) + window.innerHeight / 2;
+      scalingYPercent.value =
+        (scalingY * 100) / mapSvg.value.getBoundingClientRect().height;
+
+      if (typeof event !== "number") {
+        scaleChange.value = event.deltaY > 0 ? 0.9 : 1.1;
+        if (scale.value >= 3 && scaleChange.value == 1.1) {
+          scale.value = 3;
+        } else if (scale.value <= 1.1 && scaleChange.value == 0.9) {
+          scale.value = 1.1;
+        } else {
+          scale.value = scale.value * scaleChange.value;
+        }
+        emit("scale-value", Math.round(scale.value * 10) / 10);
+      } else {
+        scale.value = event;
+      }
+    }
+
+    function reposition() {
+      const scalingXNew =
+        (scalingXPercent.value * mapSvg.value.getBoundingClientRect().width) /
+        100;
+      const scalingYNew =
+        (scalingYPercent.value * mapSvg.value.getBoundingClientRect().height) /
+        100;
+      positionX.value =
+        (scalingXNew - window.innerWidth / 2) / (scale.value - 1);
+      positionY.value =
+        (scalingYNew - window.innerHeight / 2) / (scale.value - 1);
+      position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
+      scaleChangeController.value = true;
+    }
     // coutry
     const handleShortClick = (event) => {
       target.value = event.target.id;
@@ -492,7 +509,7 @@ export default defineComponent({
     const handleMouseDown = (event) => {
       longPressTimer.value = setTimeout(() => {
         handleLongPress(event);
-      }, 150);
+      }, 100);
     };
     //moving
     const handleMouseUp = (event) => {
@@ -504,7 +521,6 @@ export default defineComponent({
     };
 
     const handleMouseMove = (event) => {
-      //console.log(map.value);
       if (isDragging.value) {
         if (scale.value - 1 != 0) {
           positionX.value -= event.movementX / (scale.value - 1);
@@ -533,27 +549,18 @@ export default defineComponent({
         } else if (positionY.value < 0) {
           positionY.value = 0;
         }
-        console.log(
-          "X: " +
-            positionX.value +
-            " Y: " +
-            positionY.value +
-            " scale: " +
-            scale.value
-        );
+
+        positionX.value = Math.round(positionX.value);
+        positionY.value = Math.round(positionY.value);
+
         position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
         event.preventDefault();
-        console.log(mapSvg.value.getBoundingClientRect().width);
       }
     };
     onMounted(() => {
-      window.addEventListener("mousemove", updateMousePosition);
       window.addEventListener("wheel", handleScroll);
       document.body.appendChild(node.value);
       renderMapCSS();
-      positionX.value = 2400;
-      positionY.value = 2400;
-      position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
     });
     onUnmounted(() => {
       window.removeEventListener("wheel", handleScroll);

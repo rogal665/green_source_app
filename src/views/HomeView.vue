@@ -70,7 +70,7 @@ export default {
       maxPowerValue: 120,
       lowValue: 0,
       highValue: 0,
-      scale: 2,
+      scale: 1.1,
       countryFound: false,
     };
   },
