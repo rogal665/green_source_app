@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     incrementScale() {
-      if (this.scale < 3) {
+      if (this.scale < 4) {
         this.$emit("scale-value", this.scale + 0.1);
       }
     },
@@ -36,7 +36,11 @@ export default {
     updateScale(event) {
       const newScale = parseFloat(event.target.value);
       if (newScale >= 1 && newScale <= 3) {
-        this.$emit("scale-value", newScale);
+        if (newScale == 1) {
+          this.$emit("scale-value", 1.1);
+        } else {
+          this.$emit("scale-value", newScale);
+        }
       }
     },
   },

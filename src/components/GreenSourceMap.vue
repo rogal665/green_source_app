@@ -490,6 +490,27 @@ export default defineComponent({
         (scalingXNew - window.innerWidth / 2) / (scale.value - 1);
       positionY.value =
         (scalingYNew - window.innerHeight / 2) / (scale.value - 1);
+      if (
+        positionX.value >
+        (mapSvg.value.getBoundingClientRect().width - window.innerWidth) /
+          (scale.value - 1)
+      ) {
+        positionX.value =
+          (mapSvg.value.getBoundingClientRect().width - window.innerWidth) /
+          (scale.value - 1);
+      } else if (
+        positionY.value >
+        (mapSvg.value.getBoundingClientRect().height - window.innerHeight) /
+          (scale.value - 1)
+      ) {
+        positionY.value =
+          (mapSvg.value.getBoundingClientRect().height - window.innerHeight) /
+          (scale.value - 1);
+      } else if (positionX.value < 0) {
+        positionX.value = 0;
+      } else if (positionY.value < 0) {
+        positionY.value = 0;
+      }
       position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
       scaleChangeController.value = true;
     }
@@ -561,6 +582,10 @@ export default defineComponent({
       window.addEventListener("wheel", handleScroll);
       document.body.appendChild(node.value);
       renderMapCSS();
+
+      positionX.value = 5000;
+      positionY.value = 9000;
+      position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
     });
     onUnmounted(() => {
       window.removeEventListener("wheel", handleScroll);
