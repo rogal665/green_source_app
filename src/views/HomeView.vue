@@ -10,27 +10,36 @@
       @scale-value="handleScale"
     >
     </GreenSourceMap>
-    <TimeLine
-      class="timeline"
-      @time-selected="handleSelectedTime"
-      :range="dateRange"
-    ></TimeLine>
-    <RegionDetails
-      class="region-details"
-      :selectedRegionData="selectedRegionData"
-    ></RegionDetails>
-    <MapLegend
-      class="legend"
-      :lowColor="lowColor"
-      :highColor="highColor"
-      :lowValue="lowValue"
-      :highValue="highValue"
-    ></MapLegend>
-    <MapSettings
-      class="settings"
-      :scale="scale"
-      @scale-value="handleScale"
-    ></MapSettings>
+    <div class="bottom-hud">
+      <MapLegend
+        class="legend"
+        :lowColor="lowColor"
+        :highColor="highColor"
+        :lowValue="lowValue"
+        :highValue="highValue"
+      ></MapLegend>
+      <TimeLine
+        class="timeline"
+        @time-selected="handleSelectedTime"
+        :range="dateRange"
+      ></TimeLine>
+    </div>
+    <div class="right-hud">
+      <MapSettings
+        class="settings"
+        :scale="scale"
+        @scale-value="handleScale"
+      ></MapSettings>
+      <RegionDetails
+        class="region-details"
+        :selectedRegionData="selectedRegionData"
+      ></RegionDetails>
+    </div>
+    <div
+      v-if="countryHover"
+      class="mouse-follower"
+      :style="followerStyle"
+    ></div>
   </div>
 </template>
 
@@ -72,6 +81,11 @@ export default {
       highValue: 0,
       scale: 1.1,
       countryFound: false,
+      mouseX: 0,
+      mouseY: 0,
+      followerWidth: 100,
+      followerHeight: 50,
+      countryHover: "",
     };
   },
   methods: {
@@ -204,6 +218,25 @@ export default {
 
       this.selectedTime = lastKey;
     },
+    updateMousePosition(event) {
+      // Aktualizuj pozycję myszy
+      this.mouseX = event.clientX;
+      this.mouseY = event.clientY;
+    },
+  },
+
+  computed: {
+    followerStyle() {
+      const left = this.mouseX + 70 - this.followerWidth / 2 + "px";
+      const top = this.mouseY - 30 - this.followerHeight / 2 + "px";
+
+      return {
+        left,
+        top,
+        width: this.followerWidth + "px",
+        height: this.followerHeight + "px",
+      };
+    },
   },
 
   created() {
@@ -219,46 +252,12 @@ export default {
   mounted() {
     this.setDefaultTime();
     this.findSelectedTime(this.uniqueTimeISOObj, this.selectedTime);
+    document.addEventListener("mousemove", this.updateMousePosition);
   },
 
   beforeUnmount() {
     clearInterval(this.intervalId);
+    document.removeEventListener("mousemove", this.updateMousePosition);
   },
 };
 </script>
-
-<style scoped>
-.map-container {
-  overflow: hidden;
-}
-.map {
-  z-index: 0;
-}
-.timeline {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  z-index: 1;
-}
-.region-details {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  right: 0;
-}
-.legend {
-  position: absolute;
-  z-index: 1;
-  bottom: 0;
-  right: 300px;
-}
-
-.settings {
-  position: absolute;
-  z-index: 1;
-  height: fit-content;
-  margin-left: auto;
-  top: 40px;
-  right: 300px;
-}
-</style>

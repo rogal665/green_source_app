@@ -6,6 +6,7 @@ $main-colour-extra-light: #96f2d7;
 $main-colour-dark: #064431;
 $grey-colour: #343a40;
 $grey-colour-dark: #212529;
+$grey-colour-darker-dark: #15181b;
 $grey-colour-light: #dee2e6;
 
 /*global*/
@@ -13,9 +14,14 @@ $grey-colour-light: #dee2e6;
   font-family: Inter, sens-serif;
   font-weight: 500;
   line-height: 1.75;
+  font-size: 2vw;
+  @media (min-width: 800px) {
+    font-size: 16px;
+  }
 }
 body {
   color: $grey-colour;
+  overflow: hidden;
 }
 .btn:link,
 .btn:visited {
@@ -36,6 +42,7 @@ body {
   z-index: 2;
   background-color: $grey-colour-dark;
   text-align: right;
+  height: 3rem;
 }
 .content {
   height: 1fr;
@@ -77,32 +84,62 @@ h5 {
   overflow: hidden;
   height: 100vh;
 }
+
+.map-container {
+  overflow: hidden;
+}
+.bottom-hud {
+  z-index: 1;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: 20rem 18rem;
+}
+.right-hud {
+  z-index: 1;
+  position: absolute;
+  top: 4rem;
+  right: 0;
+  display: flex;
+}
+.map {
+  z-index: 1;
+}
+.timeline {
+}
+.region-details {
+}
+.legend {
+}
+
+.settings {
+}
 /*map*/
 .map {
   width: 100%;
   height: 100vh;
+  background-color: $grey-colour-darker-dark;
 }
 .vue-world-map {
   position: relative;
-  background-color: black;
 }
 
 .map-container {
   width: 2000px;
   position: absolute;
-  background-color: black;
+  background-color: $grey-colour-darker-dark;
 }
 
 .settings {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 50px;
 }
 
 /*map time line*/
 .timeline {
-  background-color: $grey-colour;
+  background-color: $grey-colour-dark;
   border-radius: 5px;
   margin: 1.3rem 0.3rem;
   color: $grey-colour-light;
@@ -129,7 +166,7 @@ h5 {
 .slider {
   -webkit-appearance: none;
   width: 100%;
-  height: 10px;
+  height: 0.6rem;
   outline: none;
   opacity: 0.7;
   transition: opacity 0.2s;
@@ -137,8 +174,8 @@ h5 {
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 1.4rem;
+  height: 1.4rem;
   background: #fff;
   border: 2px solid #ccc;
   border-radius: 50%;
@@ -148,8 +185,8 @@ h5 {
     border-color 0.2s;
 }
 .slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 1.4rem;
+  height: 1.4rem;
   background: #fff;
   border: 2px solid #ccc;
   border-radius: 50%;
@@ -160,8 +197,8 @@ h5 {
 }
 
 .slider::-ms-thumb {
-  width: 20px;
-  height: 20px;
+  width: 1.4rem;
+  height: 1.4rem;
   background: #fff;
   border: 2px solid #ccc;
   border-radius: 50%;
@@ -196,7 +233,7 @@ h5 {
   display: flex;
   flex-direction: column;
   margin: 1.3rem 2rem;
-  background-color: $grey-colour;
+  background-color: $grey-colour-dark;
   color: $grey-colour-light;
   border-radius: 5px;
 }
@@ -230,7 +267,6 @@ h5 {
   border-radius: 5px;
   border-style: none;
   color: $grey-colour-light;
-  margin: 5px;
 }
 
 .scale-btn:hover {
@@ -238,25 +274,25 @@ h5 {
 }
 
 .zoom-slider-container {
-  display: flex;
-  align-items: center;
+ 
 }
 
 .zoom-slider {
   -webkit-appearance: none;
-  width: 100px;
-  height: 10px;
+  width: 6.5rem;
+  height: 0.6rem;
   outline: none;
   opacity: 0.7;
   transition: opacity 0.2s;
   transform: rotate(-90deg);
-  margin: 50px;
+  margin-top: 3.125rem;
+  margin-bottom: 3.125rem;
 }
 .zoom-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 1.4rem;
+  height: 1.4rem;
   background: #fff;
   border: 2px solid #ccc;
   border-radius: 50%;
@@ -302,9 +338,18 @@ h5 {
 
 /*details*/
 .region-details {
-  margin: 1rem 0.3rem;
-  background-color: $grey-colour;
+  margin: 0 0.3rem;
+  background-color: $grey-colour-dark;
   color: $grey-colour-light;
   border-radius: 5px;
   padding: 10px;
+  width: 18rem;
+  height: 21rem;
+}
+.mouse-follower {
+  position: absolute;
+  background-color: #ff5733; 
+  border-radius: 5px;
+  pointer-events: none; 
+  z-index: 1;
 }

@@ -388,7 +388,7 @@ export default defineComponent({
     },
     defaultCountryFillColor: {
       type: String,
-      default: "#dadada",
+      default: "#343a40",
     },
     countryStrokeColor: {
       type: String,
@@ -498,7 +498,8 @@ export default defineComponent({
         positionX.value =
           (mapSvg.value.getBoundingClientRect().width - window.innerWidth) /
           (scale.value - 1);
-      } else if (
+      }
+      if (
         positionY.value >
         (mapSvg.value.getBoundingClientRect().height - window.innerHeight) /
           (scale.value - 1)
@@ -506,9 +507,11 @@ export default defineComponent({
         positionY.value =
           (mapSvg.value.getBoundingClientRect().height - window.innerHeight) /
           (scale.value - 1);
-      } else if (positionX.value < 0) {
+      }
+      if (positionX.value < 0) {
         positionX.value = 0;
-      } else if (positionY.value < 0) {
+      }
+      if (positionY.value < 0) {
         positionY.value = 0;
       }
       position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
@@ -557,7 +560,8 @@ export default defineComponent({
           positionX.value =
             (mapSvg.value.getBoundingClientRect().width - window.innerWidth) /
             (scale.value - 1);
-        } else if (
+        }
+        if (
           positionY.value >
           (mapSvg.value.getBoundingClientRect().height - window.innerHeight) /
             (scale.value - 1)
@@ -565,9 +569,11 @@ export default defineComponent({
           positionY.value =
             (mapSvg.value.getBoundingClientRect().height - window.innerHeight) /
             (scale.value - 1);
-        } else if (positionX.value < 0) {
+        }
+        if (positionX.value < 0) {
           positionX.value = 0;
-        } else if (positionY.value < 0) {
+        }
+        if (positionY.value < 0) {
           positionY.value = 0;
         }
 
@@ -582,10 +588,9 @@ export default defineComponent({
       window.addEventListener("wheel", handleScroll);
       document.body.appendChild(node.value);
       renderMapCSS();
-
-      positionX.value = 5000;
-      positionY.value = 9000;
-      position.value = `${positionX.value}px` + " " + `${positionY.value}px`;
+      scalingXPercent.value = 55;
+      scalingYPercent.value = 60;
+      reposition();
     });
     onUnmounted(() => {
       window.removeEventListener("wheel", handleScroll);
