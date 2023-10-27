@@ -109,9 +109,10 @@ export default {
         }
       }
     },
-    selectRegion(SelectedRegion) {
+    async selectRegion(SelectedRegion) {
       this.countryFound = false;
-      const countriesDetails = getCountrieDetails();
+      console.error('elo elod')
+      const countriesDetails = await getCountrieDetails();
       for (const country of countriesDetails) {
         if (country.country_code === SelectedRegion) {
           this.selectedRegionData = country;
