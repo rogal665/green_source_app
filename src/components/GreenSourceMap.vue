@@ -421,7 +421,7 @@ export default defineComponent({
       () => props.countryData,
       () => {
         renderMapCSS();
-      }
+      },
     );
     watch(
       () => props.injectedScale,
@@ -434,13 +434,13 @@ export default defineComponent({
           }
           await reposition();
         }
-      }
+      },
     );
     function renderMapCSS() {
       const baseCss = getBaseCss(props);
       const dynamicMapCss = getDynamicMapCss(
         props.countryData,
-        chromaScale.value
+        chromaScale.value,
       );
       node.value.innerHTML = getCombinedCssString(baseCss, dynamicMapCss);
     }

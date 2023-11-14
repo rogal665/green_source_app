@@ -46,10 +46,7 @@
 <script>
 import "@/main.scss";
 import GreenSourceMap from "@/components/GreenSourceMap.vue";
-import {
-  getCountriesData,
-  getCountrieDetails,
-} from "@/services/countries-data";
+
 import TimeLine from "@/components/MapTimeLine.vue";
 import RegionDetails from "@/components/RegionDetails.vue";
 import MapLegend from "@/components/MapLegend.vue";
@@ -89,6 +86,44 @@ export default {
     };
   },
   methods: {
+    sortedData(data) {
+      const groupedData = data.reduce((result, data) => {
+        const countryCode = data.country;
+
+        if (!result[countryCode]) {
+          result[countryCode] = {
+            countryCode,
+            weatherData: [],
+          };
+        }
+        result[countryCode].weatherData.push(data);
+        return result;
+      }, {});
+
+      // Przekształć obiekt na tablicę wartości
+      const groupedDataArray = Object.values(groupedData);
+      return groupedDataArray;
+    },
+
+    async fetchData() {
+      const currentTime = Date.now();
+      const twentyFourHoursAgo = currentTime - 24 * 60 * 60 * 1000;
+      await this.$store.dispatch("getPowerForecast", {
+        con: "and",
+        country: ["AT", "HU"],
+        windPowerGreaterThan: 10,
+        windPowerLessThan: 1000000,
+        solarPowerGreaterThan: 0,
+        solarPowerLessThan: 1000000,
+        timestampGreaterThan: twentyFourHoursAgo,
+        timestampLessThan: currentTime,
+      });
+
+      this.uniqueTimeISOObj = this.getUniqueTimeISOWithCountry(
+        this.sortedData(this.storeData),
+      );
+      this.copyDeteRange();
+    },
     handleScale(selectedScale) {
       this.scale = selectedScale;
     },
@@ -111,17 +146,20 @@ export default {
     },
     selectRegion(SelectedRegion) {
       this.countryFound = false;
-      const countriesDetails = getCountrieDetails();
-      for (const country of countriesDetails) {
-        if (country.country_code === SelectedRegion) {
-          this.selectedRegionData = country;
+      this.$store.dispatch("getCountryCapacities", SelectedRegion)
+      if(this.$store.getters.getRegion){
+        if (this.$store.getters.getRegion.length === 1){
           this.countryFound = true;
-          break;
+          this.selectedRegionData = this.$store.getters.getRegion[0]
+        }else {
+          this.countryFound = false;
+          return
         }
       }
-      if (!this.countryFound) {
-        this.selectedRegionData = "no data";
-      }
+      
+    
+
+
     },
     findSelectedTime(proxyObj, keyToFind) {
       const keys = Object.keys(proxyObj);
@@ -137,20 +175,19 @@ export default {
 
           Object.keys(selectedObj).forEach((innerKey) => {
             if (innerKey !== "__proto__" && innerKey !== "IsRevoked") {
-              powerValues[innerKey] = selectedObj[innerKey].power_mw;
+              powerValues[innerKey] = selectedObj[innerKey].wind_power;
             }
           });
           powerValues.MAX = this.maxPowerValue;
           this.countryData = powerValues;
           this.findLowHigh();
-          //console.log(this.countryData);
         }
       });
     },
     copySelectedTimeFromUniqueTimeObj(
       countryData,
       uniqueTimeISOObj,
-      selectedTimeKey
+      selectedTimeKey,
     ) {
       if (!countryData || !uniqueTimeISOObj || !selectedTimeKey) {
         console.error("Nieprawidłowe dane wejściowe.");
@@ -166,7 +203,7 @@ export default {
 
       if (!selectedTimeValueTrimmed) {
         console.error(
-          `Brak danych pod kluczem ${selectedTimeKey} w uniqueTimeISOObj.`
+          `Brak danych pod kluczem ${selectedTimeKey} w uniqueTimeISOObj.`,
         );
         return;
       }
@@ -190,6 +227,8 @@ export default {
       });
     },
     getUniqueTimeISOWithCountry(data) {
+
+
       data.forEach((item) => {
         item.weatherData.forEach((dataItem) => {
           const { time_iso, ...rest } = dataItem;
@@ -202,8 +241,6 @@ export default {
           }
         });
       });
-
-      //console.log(this.uniqueTimeISOObj);
       return this.uniqueTimeISOObj;
     },
     setDefaultTime() {
@@ -226,6 +263,9 @@ export default {
   },
 
   computed: {
+    storeData() {
+      return this.$store.getters.getData;
+    },
     followerStyle() {
       const left = this.mouseX + 70 - this.followerWidth / 2 + "px";
       const top = this.mouseY - 30 - this.followerHeight / 2 + "px";
@@ -240,13 +280,9 @@ export default {
   },
 
   created() {
-    this.data = getCountriesData();
-    this.uniqueTimeISOObj = this.getUniqueTimeISOWithCountry(this.data);
-    this.copyDeteRange();
+    this.data = this.fetchData();
     this.intervalId = setInterval(() => {
-      this.data = getCountriesData();
-      this.uniqueTimeISOObj = this.getUniqueTimeISOWithCountry(this.data);
-      this.copyDeteRange();
+      this.data = this.fetchData();
     }, 100000);
   },
   mounted() {

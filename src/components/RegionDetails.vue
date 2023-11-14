@@ -3,6 +3,7 @@
     <h3>{{ selectedCountry }}</h3>
     <p>Energy from wind capity: {{ selectedRegionData.wind_capacity }}MW</p>
     <p>Energy from solar capity: {{ selectedRegionData.solar_capacity }}MW</p>
+    <p>Single wind avg: {{ parseFloat(selectedRegionData.single_wind_avg).toFixed(2) }}MW</p>
   </div>
 </template>
 
