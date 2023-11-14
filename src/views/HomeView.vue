@@ -144,11 +144,19 @@ export default {
         }
       }
     },
-    selectRegion(SelectedRegion) {
+    async selectRegion(SelectedRegion) {
       this.countryFound = false;
+<<<<<<< HEAD
       this.$store.dispatch("getCountryCapacities", SelectedRegion)
       if(this.$store.getters.getRegion){
         if (this.$store.getters.getRegion.length === 1){
+=======
+      console.error('elo elod')
+      const countriesDetails = await getCountrieDetails();
+      for (const country of countriesDetails) {
+        if (country.country_code === SelectedRegion) {
+          this.selectedRegionData = country;
+>>>>>>> 4ca4bbb4f8f0c7677e1cad252b52dcba83e0df44
           this.countryFound = true;
           this.selectedRegionData = this.$store.getters.getRegion[0]
         }else {
