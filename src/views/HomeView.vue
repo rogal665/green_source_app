@@ -108,16 +108,7 @@ export default {
     async fetchData() {
       const currentTime = Date.now();
       const twentyFourHoursAgo = currentTime - 24 * 60 * 60 * 1000;
-      await this.$store.dispatch("getPowerForecast", {
-        con: "and",
-        country: ["AT", "HU"],
-        windPowerGreaterThan: 10,
-        windPowerLessThan: 1000000,
-        solarPowerGreaterThan: 0,
-        solarPowerLessThan: 1000000,
-        timestampGreaterThan: twentyFourHoursAgo,
-        timestampLessThan: currentTime,
-      });
+      await this.$store.dispatch("getPowerForecast", {country: ["AT", "HU"]});
 
       this.uniqueTimeISOObj = this.getUniqueTimeISOWithCountry(
         this.sortedData(this.storeData),
@@ -146,28 +137,24 @@ export default {
     },
     async selectRegion(SelectedRegion) {
       this.countryFound = false;
-<<<<<<< HEAD
       this.$store.dispatch("getCountryCapacities", SelectedRegion)
       if(this.$store.getters.getRegion){
         if (this.$store.getters.getRegion.length === 1){
-=======
-      console.error('elo elod')
-      const countriesDetails = await getCountrieDetails();
-      for (const country of countriesDetails) {
-        if (country.country_code === SelectedRegion) {
-          this.selectedRegionData = country;
->>>>>>> 4ca4bbb4f8f0c7677e1cad252b52dcba83e0df44
-          this.countryFound = true;
-          this.selectedRegionData = this.$store.getters.getRegion[0]
-        }else {
-          this.countryFound = false;
-          return
+          console.error('elo elod')
+          const countriesDetails = await getCountrieDetails();
+          
+          for (const country of countriesDetails) {
+            if (country.country_code === SelectedRegion) {
+              this.selectedRegionData = country;
+              this.countryFound = true;
+              this.selectedRegionData = this.$store.getters.getRegion[0]
+            }else {
+              this.countryFound = false;
+              return
+            }
+          }
         }
       }
-      
-    
-
-
     },
     findSelectedTime(proxyObj, keyToFind) {
       const keys = Object.keys(proxyObj);
